@@ -5,37 +5,159 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Games Archive Mirror</title>
 <style>
-  body { font-family: system-ui, Arial; margin: 0; background:#12121f; color:#eee; }
-  header { padding:16px 20px; background:#1a1a2e; border-bottom:2px solid #e94560; }
-  h1 { margin:0 0 10px; color:#e94560; font-size:20px; }
-  #search { width:100%; max-width:420px; padding:8px 12px; border-radius:6px;
-            border:1px solid #333; background:#16213e; color:#eee; }
-  #stats { color:#8ab; font-size:13px; margin-top:8px; }
-  table { width:100%; border-collapse:collapse; font-size:13px; }
-  th, td { padding:6px 10px; border-bottom:1px solid #23233a; text-align:right; }
-  th { background:#16213e; position:sticky; top:0; }
-  tr:hover { background:#1c1c30; }
-  nav { padding:12px 20px; display:flex; gap:8px; align-items:center; }
-  button { padding:6px 12px; border:0; border-radius:6px; background:#e94560;
-           color:#fff; cursor:pointer; }
-  button:disabled { background:#444; cursor:default; }
-  a { color:#e94560; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, Arial; background: #12121f; color: #eee; min-height: 100vh; }
+
+  header {
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-bottom: 2px solid #e94560;
+  }
+
+  h1 {
+    font-size: 22px;
+    color: #e94560;
+    margin-bottom: 12px;
+  }
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  #search {
+    flex: 1;
+    min-width: 200px;
+    max-width: 400px;
+    padding: 10px 14px;
+    border: 2px solid #333;
+    border-radius: 8px;
+    background: #0f0f1a;
+    color: #eee;
+    font-size: 14px;
+    transition: border-color 0.2s;
+  }
+
+  #search:focus {
+    outline: none;
+    border-color: #e94560;
+  }
+
+  #stats {
+    color: #8ab;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+
+  .nav {
+    padding: 12px 24px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    border-bottom: 1px solid #23233a;
+    background: #16213e;
+  }
+
+  .nav button {
+    padding: 8px 16px;
+    border: 0;
+    border-radius: 6px;
+    background: #e94560;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    transition: opacity 0.2s;
+  }
+
+  .nav button:hover { opacity: 0.85; }
+  .nav button:disabled { background: #444; cursor: default; opacity: 0.6; }
+
+  #page { color: #ccc; font-size: 14px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th, td {
+    padding: 8px 12px;
+    border-bottom: 1px solid #23233a;
+    text-align: right;
+  }
+
+  th {
+    background: #16213e;
+    position: sticky;
+    top: 0;
+    color: #e94560;
+    font-weight: 600;
+  }
+
+  tr:hover { background: #1c1c30; }
+
+  .meta {
+    display: inline-block;
+    background: #16213e;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #8ab;
+    margin-left: 6px;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+  }
+
+  a { color: #e94560; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #8ab;
+    font-size: 16px;
+  }
+
+  .error {
+    text-align: center;
+    padding: 60px 20px;
+    color: #e94560;
+    font-size: 16px;
+  }
+
+  @media (max-width: 600px) {
+    header, .nav { padding: 12px 16px; }
+    th, td { padding: 6px 8px; font-size: 12px; }
+    #search { max-width: 100%; }
+  }
 </style>
 </head>
 <body>
+
 <header>
   <h1>🎮 Games Archive Mirror</h1>
-  <input id="search" placeholder="ابحث...">
+  <div class="controls">
+    <input id="search" placeholder="🔍 ابحث عن لعبة...">
+    <span id="links" style="font-size:13px;">
+      <a href="https://cdn.jsdelivr.net/gh/zaasi2004-crypto/Zack@main/GAMES-archive.org-formatted.json" target="_blank">jsDelivr</a>
+      &nbsp;|&nbsp;
+      <a href="https://cdn.statically.io/gh/zaasi2004-crypto/Zack/main/GAMES-archive.org-formatted.json" target="_blank">Statically</a>
+      &nbsp;|&nbsp;
+      <a href="https://raw.githubusercontent.com/zaasi2004-crypto/Zack/refs/heads/main/GAMES-archive.org-formatted.json" target="_blank">GitHub</a>
+    </span>
+  </div>
   <div id="stats">جاري التحميل...</div>
-  <p style="margin:6px 0 0;font-size:13px">
-    تحميل خام: <a href="GAMES-archive.org-formatted.json">JSON</a>
-  </p>
 </header>
 
-<nav>
-  <button id="prev">السابق</button>
+<nav class="nav">
+  <button id="prev">← السابق</button>
   <span id="page"></span>
-  <button id="next">التالي</button>
+  <button id="next">التالي →</button>
 </nav>
 
 <div style="overflow-x:auto"><table><tbody id="rows"></tbody></table></div>
@@ -43,15 +165,31 @@
 <script>
 const PAGE = 100;
 let all = [], view = [], page = 0;
+const ESC = s => String(s).replace(/[&<>"']/g, c =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-fetch('GAMES-archive.org-formatted.json')
-  .then(r => r.json())
+// ✅ الرابط المصحح — jsDelivr
+const API_URL = 'https://cdn.jsdelivr.net/gh/zaasi2004-crypto/Zack@main/GAMES-archive.org-formatted.json';
+
+fetch(API_URL)
+  .then(r => {
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  })
   .then(d => {
-    all = Array.isArray(d) ? d : (d.items || d.games || Object.values(d));
-    document.getElementById('stats').textContent = 'إجمالي العناصر: ' + all.length;
+    if (Array.isArray(d)) all = d;
+    else if (d.items) all = d.items;
+    else if (d.games) all = d.games;
+    else all = Object.values(d);
+
+    document.getElementById('stats').textContent = 'إجمالي العناصر: ' + all.length.toLocaleString('ar');
     render();
   })
-  .catch(e => document.getElementById('stats').textContent = 'خطأ: ' + e.message);
+  .catch(e => {
+    document.getElementById('stats').textContent = '';
+    document.getElementById('rows').innerHTML =
+      '<tr><td class="error">خطأ في التحميل: ' + ESC(e.message) + '<br>جرب رابط آخر من الأعلى</td></tr>';
+  });
 
 function filter(q) {
   q = q.trim().toLowerCase();
@@ -60,19 +198,22 @@ function filter(q) {
 }
 
 function render() {
-  const start = page * PAGE, slice = view.slice(start, start + PAGE);
-  document.getElementById('rows').innerHTML =
-    '<tr><th>#</th><th>البيانات</th></tr>' +
-    slice.map((x, i) =>
-      `<tr><td>${start + i + 1}</td><td>${esc(typeof x === 'object' ? JSON.stringify(x) : x)}</td></tr>`
-    ).join('');
-  document.getElementById('page').textContent =
-    (page + 1) + ' / ' + Math.max(1, Math.ceil(view.length / PAGE));
-  document.getElementById('prev').disabled = page === 0;
-  document.getElementById('next').disabled = (page + 1) * PAGE >= view.length;
-}
+  const start = page * PAGE;
+  const slice = view.slice(start, start + PAGE);
+  const totalPages = Math.max(1, Math.ceil(view.length / PAGE));
 
-const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  document.getElementById('rows').innerHTML =
+    '<tr><th>#</th><th>المحتوى</th></tr>' +
+    slice.map((x, i) => {
+      const val = typeof x === 'object' ? JSON.stringify(x) : ESC(x);
+      return '<tr><td>' + (start + i + 1) + '</td><td>' + val + '</td></tr>';
+    }).join('');
+
+  document.getElementById('page').textContent =
+    (page + 1) + ' / ' + totalPages + ' (' + view.length.toLocaleString('ar') + ' نتيجة)';
+  document.getElementById('prev').disabled = page === 0;
+  document.getElementById('next').disabled = (page + 1) >= totalPages;
+}
 
 document.getElementById('search').addEventListener('input', e => filter(e.target.value));
 document.getElementById('prev').onclick = () => { if (page > 0) { page--; render(); } };
