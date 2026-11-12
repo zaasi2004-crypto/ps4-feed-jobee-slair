@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games Archive Mirror</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a2e; color: #eee; }
+        h1 { color: #e94560; }
+        pre { background: #16213e; padding: 15px; border-radius: 8px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🎮 Games Archive Mirror</h1>
+    <p>نسخة مرآة من <a href="https://github.com/zaasi2004-crypto/Zack" style="color:#e94560;">Zack Crypto Games Archive</a></p>
+    <pre id="data">جاري التحميل...</pre>
+    <script>
+        fetch('GAMES-archive.org-formatted.json')
+            .then(r => r.json())
+            .then(d => document.getElementById('data').textContent = JSON.stringify(d, null, 2))
+            .catch(e => document.getElementById('data').textContent = 'خطأ في التحميل: ' + e.message);
+    </script>
+</body>
+</html>
